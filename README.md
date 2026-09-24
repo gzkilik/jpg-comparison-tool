@@ -1,13 +1,12 @@
 # JPG Comparison Tool
 
-A web-based image comparison tool for loading, comparing, and analyzing 2-4 JPG files side-by-side with synchronized zoom and pan controls.
+A web-based image comparison tool for loading, comparing, and analyzing JPG files side-by-side with synchronized zoom and pan controls.
 
 ## Features
 
-- **Multiple Image Support**: Load 2-4 JPG files in a responsive grid layout
-  - 2 images: Side-by-side (horizontal)
-  - 3 images: 2 on top, 1 centered below
-  - 4 images: 2x2 grid
+- **Multiple Image Support**: Load any number of JPG files in a responsive layout
+  - Row layout is selected by default
+  - Optional grid layout is available from the top bar
 
 - **Synchronized Controls**:
   - Zoom in/out applied to all images simultaneously

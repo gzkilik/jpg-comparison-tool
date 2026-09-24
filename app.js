@@ -8,6 +8,8 @@ const App = (() => {
     const PAN_STEP = 20;
 
     let images = [];
+    let layoutMode = 'row';
+    let draggedImageId = null;
     let isDragging = false;
     let dragStart = { x: 0, y: 0 };
     let lastViewState = { ...State.getViewState() };
@@ -26,6 +28,7 @@ const App = (() => {
         fitButton: document.getElementById('fitButton'),
         undoButton: document.getElementById('undoButton'),
         redoButton: document.getElementById('redoButton'),
+        layoutButtons: document.querySelectorAll('.layout-button'),
         helpButton: document.getElementById('helpButton'),
         helpModal: document.getElementById('helpModal'),
     };
@@ -95,6 +98,14 @@ const App = (() => {
             }
         });
 
+        elements.layoutButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                layoutMode = button.dataset.layout;
+                updateLayoutButtons();
+                updateImageGrid();
+            });
+        });
+
         // Clear
         elements.clearButton.addEventListener('click', () => {
             if (confirm('Clear all images?')) {
@@ -136,11 +147,6 @@ const App = (() => {
 
         if (jpgFiles.length === 0) {
             alert('Please select JPG/JPEG files');
-            return;
-        }
-
-        if (jpgFiles.length + images.length > 4) {
-            alert('Maximum 4 images allowed. Current: ' + images.length);
             return;
         }
 
@@ -252,6 +258,59 @@ const App = (() => {
         });
     }
 
+    function handleImageDragStart(e, imageId) {
+        e.stopPropagation();
+        draggedImageId = imageId;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(imageId));
+        e.currentTarget.closest('.image-container').classList.add('dragging');
+    }
+
+    function handleImageDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        e.currentTarget.classList.add('drop-target');
+    }
+
+    function handleImageDragLeave(e) {
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+            e.currentTarget.classList.remove('drop-target');
+        }
+    }
+
+    function handleImageDrop(e, targetImageId) {
+        e.preventDefault();
+        const sourceIndex = images.findIndex(image => image.id === draggedImageId);
+        const targetIndex = images.findIndex(image => image.id === targetImageId);
+
+        if (sourceIndex === -1 || targetIndex === -1 || sourceIndex === targetIndex) {
+            handleImageDragEnd();
+            return;
+        }
+
+        const [movedImage] = images.splice(sourceIndex, 1);
+        const insertionIndex = sourceIndex < targetIndex ? targetIndex - 1 : targetIndex;
+        images.splice(insertionIndex, 0, movedImage);
+        State.reorderImages(images.map(image => image.objectUrl));
+        handleImageDragEnd();
+        images.forEach(image => {
+            const container = Array.from(elements.imageGrid.children)
+                .find(element => element.dataset.imageId === String(image.id));
+            if (container) {
+                elements.imageGrid.appendChild(container);
+            }
+        });
+        render();
+        State.saveSession();
+    }
+
+    function handleImageDragEnd() {
+        draggedImageId = null;
+        document.querySelectorAll('.image-container').forEach(container => {
+            container.classList.remove('dragging', 'drop-target');
+        });
+    }
+
     // ===== Rendering =====
     function render() {
         const viewState = State.getViewState();
@@ -281,7 +340,7 @@ const App = (() => {
 
     function updateImageGrid() {
         elements.imageGrid.innerHTML = '';
-        elements.imageGrid.className = 'image-grid';
+        elements.imageGrid.className = `image-grid layout-${layoutMode}`;
 
         if (images.length > 0) {
             elements.imageGrid.classList.add(`count-${images.length}`);
@@ -290,6 +349,7 @@ const App = (() => {
         images.forEach((image, index) => {
             const container = document.createElement('div');
             container.className = 'image-container';
+            container.dataset.imageId = image.id;
 
             const wrapper = document.createElement('div');
             wrapper.className = 'image-wrapper';
@@ -304,6 +364,14 @@ const App = (() => {
             label.className = 'image-label';
             label.textContent = `${index + 1}. ${image.filename}`;
 
+            const dragHandle = document.createElement('button');
+            dragHandle.className = 'drag-handle';
+            dragHandle.type = 'button';
+            dragHandle.draggable = true;
+            dragHandle.textContent = '↔';
+            dragHandle.title = 'Drag to reorder image';
+            dragHandle.setAttribute('aria-label', `Drag to reorder ${image.filename}`);
+
             const removeBtn = document.createElement('button');
             removeBtn.className = 'remove-btn';
             removeBtn.innerHTML = '&times;';
@@ -317,11 +385,17 @@ const App = (() => {
             });
 
             wrapper.addEventListener('mousedown', (e) => handleImageMouseDown(e, image.id));
+            dragHandle.addEventListener('dragstart', (e) => handleImageDragStart(e, image.id));
+            dragHandle.addEventListener('dragend', handleImageDragEnd);
+            container.addEventListener('dragover', handleImageDragOver);
+            container.addEventListener('dragleave', handleImageDragLeave);
+            container.addEventListener('drop', (e) => handleImageDrop(e, image.id));
             document.addEventListener('mousemove', handleImageMouseMove);
             document.addEventListener('mouseup', handleImageMouseUp);
 
             container.appendChild(wrapper);
             container.appendChild(label);
+            container.appendChild(dragHandle);
             container.appendChild(removeBtn);
 
             elements.imageGrid.appendChild(container);
@@ -332,6 +406,14 @@ const App = (() => {
         elements.undoButton.disabled = !State.canUndo();
         elements.redoButton.disabled = !State.canRedo();
         elements.clearButton.disabled = images.length === 0;
+    }
+
+    function updateLayoutButtons() {
+        elements.layoutButtons.forEach(button => {
+            const isActive = button.dataset.layout === layoutMode;
+            button.classList.toggle('active', isActive);
+            button.setAttribute('aria-pressed', String(isActive));
+        });
     }
 
     return {

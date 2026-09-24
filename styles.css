@@ -38,10 +38,43 @@ header h1 {
 
 .file-controls,
 .zoom-controls,
-.edit-controls {
+.edit-controls,
+.layout-controls {
     display: flex;
     gap: 8px;
     align-items: center;
+}
+
+.layout-label {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.layout-button {
+    padding: 6px 10px;
+    border: 1px solid #636e72;
+    background-color: #2d3436;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.layout-button:first-of-type {
+    border-radius: 4px 0 0 4px;
+}
+
+.layout-button:last-of-type {
+    border-radius: 0 4px 4px 0;
+}
+
+.layout-button + .layout-button {
+    margin-left: -8px;
+}
+
+.layout-button:hover,
+.layout-button.active {
+    background-color: #0984e3;
+    border-color: #0984e3;
 }
 
 #fileInput {
@@ -143,19 +176,16 @@ header h1 {
     height: 100%;
 }
 
-/* 2 images: stacked horizontally */
-.image-grid.count-2 {
-    grid-template-columns: 1fr;
+.image-grid.layout-row {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-template-rows: 1fr;
+    grid-template-columns: none;
 }
 
-/* 3 images: stacked horizontally */
-.image-grid.count-3 {
-    grid-template-columns: 1fr;
-}
-
-/* 4 images: 2x2 grid */
-.image-grid.count-4 {
+.image-grid.layout-grid {
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(0, 1fr);
 }
 
 .image-container {
@@ -168,6 +198,15 @@ header h1 {
     align-items: center;
     position: relative;
     min-height: 300px;
+}
+
+.image-container.dragging {
+    opacity: 0.45;
+}
+
+.image-container.drop-target {
+    border-color: #00b894;
+    box-shadow: inset 0 0 0 2px #00b894;
 }
 
 .image-wrapper {
@@ -205,6 +244,29 @@ header h1 {
     font-weight: bold;
     max-width: calc(100% - 16px);
     word-break: break-all;
+}
+
+.drag-handle {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    width: 30px;
+    height: 26px;
+    border: 1px solid #95a5a6;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.65);
+    color: white;
+    cursor: grab;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.drag-handle:hover {
+    background-color: rgba(9, 132, 227, 0.9);
+}
+
+.drag-handle:active {
+    cursor: grabbing;
 }
 
 .remove-btn {
@@ -302,11 +364,7 @@ header h1 {
         grid-template-columns: 1fr;
     }
 
-    .image-grid.count-2 {
-        grid-template-columns: 1fr;
-    }
-
-    .image-grid.count-4 {
+    .image-grid.layout-grid {
         grid-template-columns: 1fr;
     }
 
@@ -318,7 +376,8 @@ header h1 {
 
     .file-controls,
     .zoom-controls,
-    .edit-controls {
+    .edit-controls,
+    .layout-controls {
         width: 100%;
     }
 }

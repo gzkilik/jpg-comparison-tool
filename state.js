@@ -131,6 +131,14 @@ const State = (() => {
     }
 
     /**
+     * Reorder images to match the supplied object URL order
+     */
+    function reorderImages(objectUrls) {
+        const order = new Map(objectUrls.map((objectUrl, index) => [objectUrl, index]));
+        images.sort((first, second) => order.get(first.objectUrl) - order.get(second.objectUrl));
+    }
+
+    /**
      * Clear all images
      */
     function clearImages() {
@@ -214,6 +222,7 @@ const State = (() => {
         addImage,
         removeImage,
         getImages,
+        reorderImages,
         clearImages,
         serializeSession,
         saveSession,
