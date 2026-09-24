@@ -143,20 +143,14 @@ header h1 {
     height: 100%;
 }
 
-/* 2 images: side-by-side */
+/* 2 images: stacked horizontally */
 .image-grid.count-2 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
 }
 
-/* 3 images: 2 on top, 1 on bottom (spanning full width or 1.5x) */
+/* 3 images: stacked horizontally */
 .image-grid.count-3 {
-    grid-template-columns: repeat(2, 1fr);
-}
-
-.image-grid.count-3 .image-container:last-child {
-    grid-column: 1 / -1;
-    max-width: 50%;
-    margin: auto;
+    grid-template-columns: 1fr;
 }
 
 /* 4 images: 2x2 grid */
@@ -310,10 +304,6 @@ header h1 {
 
     .image-grid.count-2 {
         grid-template-columns: 1fr;
-    }
-
-    .image-grid.count-3 .image-container:last-child {
-        max-width: 100%;
     }
 
     .image-grid.count-4 {
