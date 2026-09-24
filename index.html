@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPG Comparison Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JPG Comparison Tool</h1>
+            <div class="header-controls">
+                <div class="file-controls">
+                    <input type="file" id="fileInput" accept=".jpg,.jpeg" multiple>
+                    <button id="openButton" class="btn btn-primary">Open Images</button>
+                    <button id="clearButton" class="btn btn-secondary">Clear All</button>
+                </div>
+                <div class="zoom-controls">
+                    <button id="zoomInButton" class="btn" title="Zoom In (+)">🔍+</button>
+                    <span id="zoomLevel" class="zoom-display">100%</span>
+                    <button id="zoomOutButton" class="btn" title="Zoom Out (-)">🔍−</button>
+                    <button id="fitButton" class="btn" title="Fit to Screen">Fit</button>
+                </div>
+                <div class="edit-controls">
+                    <button id="undoButton" class="btn" title="Undo (Ctrl+Z)">↶ Undo</button>
+                    <button id="redoButton" class="btn" title="Redo (Ctrl+Y)">↷ Redo</button>
+                </div>
+                <button id="helpButton" class="btn btn-secondary" title="Keyboard Shortcuts">?</button>
+            </div>
+        </header>
+
+        <div id="dropZone" class="drop-zone">
+            <p>Drag & drop JPG files here or click "Open Images"</p>
+        </div>
+
+        <main id="mainContent" class="main-content hidden">
+            <div id="imageGrid" class="image-grid">
+                <!-- Image containers will be inserted here dynamically -->
+            </div>
+        </main>
+
+        <div id="helpModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Keyboard Shortcuts</h2>
+                <table class="shortcuts-table">
+                    <tr>
+                        <td>+</td>
+                        <td>Zoom In</td>
+                    </tr>
+                    <tr>
+                        <td>−</td>
+                        <td>Zoom Out</td>
+                    </tr>
+                    <tr>
+                        <td>Ctrl+Z</td>
+                        <td>Undo</td>
+                    </tr>
+                    <tr>
+                        <td>Ctrl+Y</td>
+                        <td>Redo</td>
+                    </tr>
+                    <tr>
+                        <td>Arrow Keys</td>
+                        <td>Pan / Move</td>
+                    </tr>
+                    <tr>
+                        <td>Mouse Wheel</td>
+                        <td>Zoom</td>
+                    </tr>
+                    <tr>
+                        <td>Click & Drag</td>
+                        <td>Pan</td>
+                    </tr>
+                    <tr>
+                        <td>R</td>
+                        <td>Reset Pan</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="state.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
