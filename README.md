@@ -1,4 +1,4 @@
-# JPG Comparison Tool
+# JPG Comparison Panel
 
 A web-based image comparison tool for loading, comparing, and analyzing JPG files side-by-side with synchronized zoom and pan controls.
 
